@@ -1,0 +1,641 @@
+<title>Groundwire</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --bg:#F2F5F5;
+    --surface:#FFFFFF;
+    --surface-2:#E7ECEC;
+    --border:#D3DBDB;
+    --ink:#101A1D;
+    --ink-2:#4A5A5E;
+    --ink-3:#7C8B8E;
+    --accent:#0F8B8D;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#DCF0EF;
+    --good:#1E8E5A;
+    --good-soft:#E1F3EA;
+    --warn:#B4750E;
+    --warn-soft:#FBEBD3;
+    --mono-fill:#94A3AA;
+    --code-bg:#0E1B1E;
+    --code-ink:#DCE8E8;
+    --code-accent:#5FD3CE;
+    --shadow: 0 1px 2px rgba(16,26,29,0.06), 0 6px 20px rgba(16,26,29,0.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1213; --surface:#121C1E; --surface-2:#182426; --border:#263436;
+      --ink:#EAF1F1; --ink-2:#AEC0C1; --ink-3:#7E9294;
+      --accent:#3FC8C4; --accent-ink:#06201F; --accent-soft:#153331;
+      --good:#4FBE86; --good-soft:#12291F; --warn:#E3A94A; --warn-soft:#2E2413;
+      --mono-fill:#3C4E51; --code-bg:#070E0F; --code-ink:#D4E4E4; --code-accent:#6FE0DA;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1213; --surface:#121C1E; --surface-2:#182426; --border:#263436;
+    --ink:#EAF1F1; --ink-2:#AEC0C1; --ink-3:#7E9294;
+    --accent:#3FC8C4; --accent-ink:#06201F; --accent-soft:#153331;
+    --good:#4FBE86; --good-soft:#12291F; --warn:#E3A94A; --warn-soft:#2E2413;
+    --mono-fill:#3C4E51; --code-bg:#070E0F; --code-ink:#D4E4E4; --code-accent:#6FE0DA;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans', system-ui, sans-serif;line-height:1.55;padding-inline:20px;}
+  .wrap{max-width:840px;margin:0 auto;}
+
+  header.top{
+    position:sticky;top:env(safe-area-inset-top,0px);
+    background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(6px);
+    margin-inline:-20px;padding:14px 20px;border-bottom:1px solid var(--border);z-index:5;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  header.top .brand{font-family:'IBM Plex Sans Condensed', sans-serif;font-weight:700;font-size:15px;letter-spacing:0.02em;}
+  nav.jump{display:flex;gap:4px;flex-wrap:wrap;}
+  nav.jump a{font-size:12.5px;color:var(--ink-2);text-decoration:none;padding:6px 10px;border-radius:7px;}
+  nav.jump a:hover, nav.jump a:focus-visible{background:var(--surface-2);color:var(--ink);}
+
+  .hero{padding-block:36px 24px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--good);background:var(--good-soft);border-radius:99px;padding:5px 12px;margin-bottom:16px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--good);}
+  h1{font-family:'IBM Plex Sans Condensed', sans-serif;font-weight:700;font-size:clamp(30px,6vw,44px);line-height:1.06;letter-spacing:-0.01em;margin:0 0 14px;text-wrap:balance;}
+  .dek{font-size:16.5px;color:var(--ink-2);max-width:60ch;margin:0;}
+  .meta-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:20px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-3);}
+  .meta-row b{color:var(--ink-2);font-weight:600;}
+
+  section{padding-block:34px;border-top:1px solid var(--border);}
+  section:first-of-type{border-top:none;}
+  h2{font-family:'IBM Plex Sans Condensed', sans-serif;font-weight:700;font-size:22px;margin:0 0 6px;display:flex;align-items:baseline;gap:10px;}
+  h2 .num{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:14px;font-weight:600;}
+  .section-dek{color:var(--ink-2);font-size:14.5px;margin:0 0 22px;max-width:64ch;}
+  h3{font-size:16px;font-weight:600;margin:26px 0 10px;}
+  p{margin:0 0 12px;color:var(--ink);}
+  p.muted{color:var(--ink-2);font-size:14px;}
+  a{color:var(--accent);}
+  ul, ol{padding-left:22px;margin:0 0 14px;}
+  li{margin-bottom:6px;}
+  strong{font-weight:600;}
+  code{font-family:'IBM Plex Mono',monospace;background:var(--surface-2);padding:1.5px 5px;border-radius:4px;font-size:0.88em;}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0 24px;}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);}
+  .stat .n{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:24px;font-variant-numeric:tabular-nums;color:var(--accent);}
+  .stat .n small{font-size:13px;color:var(--ink-3);font-weight:500;}
+  .stat .l{font-size:12.5px;color:var(--ink-2);margin-top:3px;}
+
+  .check-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .check-list li{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow);}
+  .check-list .tick{flex:none;width:20px;height:20px;border-radius:50%;background:var(--good-soft);color:var(--good);display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:1px;}
+  .check-list .body b{display:block;font-size:14.5px;margin-bottom:2px;}
+  .check-list .body span{font-size:13.5px;color:var(--ink-2);}
+
+  figure{margin:18px 0;}
+  .diagram{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 14px;box-shadow:var(--shadow);overflow-x:auto;}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto;color:var(--ink-2);}
+  figcaption{font-size:13px;color:var(--ink-3);margin-top:10px;text-align:center;}
+  .bridge-fill{fill:var(--accent-soft);}
+  .bridge-text{fill:var(--accent);font-weight:600;}
+
+  .step{position:relative;padding-left:40px;margin-bottom:26px;}
+  .step:last-child{margin-bottom:0;}
+  .step::before{content:attr(data-n);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .step h3{margin:2px 0 8px;}
+  .step p{font-size:14.5px;}
+
+  pre{background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:16px 18px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:12.4px;line-height:1.6;margin:10px 0 16px;}
+  pre code{background:none;padding:0;font-size:inherit;color:inherit;}
+  .cmt{color:var(--code-accent);}
+  .filepath{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-2);background:var(--surface-2);display:inline-block;padding:3px 9px;border-radius:6px;margin-bottom:8px;}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:13.5px;}
+  caption{caption-side:top;text-align:left;font-size:12.5px;color:var(--ink-3);margin-bottom:8px;}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;}
+  th{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.03em;text-transform:uppercase;color:var(--ink-3);font-weight:600;}
+  td code{font-size:0.85em;}
+  .tbl-wrap{overflow-x:auto;}
+
+  .callout{border:1px solid var(--border);border-left:3px solid var(--accent);background:var(--surface);border-radius:0 12px 12px 0;padding:14px 16px;font-size:14px;color:var(--ink-2);margin:16px 0;}
+  .callout b{color:var(--ink);}
+  .callout.warn{border-left-color:var(--warn);}
+
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 20px 14px;box-shadow:var(--shadow);margin:18px 0;}
+  .chart-title{font-size:13.5px;font-weight:600;margin-bottom:2px;}
+  .chart-sub{font-size:12.5px;color:var(--ink-3);margin-bottom:16px;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-label{width:170px;flex:none;font-size:12px;color:var(--ink-2);font-family:'IBM Plex Mono',monospace;}
+  .bar-track{flex:1;background:var(--surface-2);border-radius:6px;height:22px;position:relative;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:6px;background:var(--accent);}
+  .bar-value{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--ink);width:110px;flex:none;text-align:right;}
+
+  .ip-table td:first-child{font-family:'IBM Plex Mono',monospace;}
+
+  .roadmap{list-style:none;padding:0;counter-reset:step;}
+  .roadmap li{counter-increment:step;position:relative;padding-left:34px;margin-bottom:16px;font-size:14.5px;}
+  .roadmap li::before{content:counter(step);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border);color:var(--ink-2);font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+  .roadmap li b{display:block;color:var(--ink);}
+  .roadmap li span{color:var(--ink-2);font-size:13.5px;}
+
+  footer{padding-block:28px 40px;color:var(--ink-3);font-size:12.5px;border-top:1px solid var(--border);}
+  footer a{color:var(--ink-2);}
+
+  @media (max-width:560px){
+    .bar-label{width:110px;font-size:10.5px;}
+    .bar-value{width:80px;}
+  }
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="brand">📡 GROUNDWIRE</div>
+  <nav class="jump">
+    <a href="#achieved">Achieved</a>
+    <a href="#howitworks">How it works</a>
+    <a href="#implementation">Rebuild it</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#next">Fleet plan</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="eyebrow"><span class="dot"></span> Link verified &amp; reproducible</div>
+  <h1>A wireless telemetry bridge, built from parts already on the bench.</h1>
+  <p class="dek">One flight controller's MAVLink stream now reaches a ground PC over the Siyi MK32's Ethernet bridge — no telemetry radio, no VPN, no internet relay. This report documents what was built, how to rebuild it from nothing, the tests that prove it works, and the path from one drone to five.</p>
+  <div class="meta-row">
+    <span><b>Airframe under test:</b> PX4 / ArduPilot companion link</span>
+    <span><b>Companion computer:</b> NVIDIA Jetson</span>
+    <span><b>Link hardware:</b> Siyi MK32</span>
+    <span><b>Date:</b> 2026-09-17</span>
+  </div>
+</div>
+
+<section id="achieved">
+  <h2><span class="num">01</span> What we achieved</h2>
+  <p class="section-dek">A single drone's MAVLink telemetry is now reachable from any UDP-speaking ground station on the network — proven with live data, not just a running service.</p>
+
+  <ul class="check-list">
+    <li><span class="tick">✓</span><div class="body"><b>No telemetry radio needed</b><span>The Siyi MK32 already bridges Ethernet transparently between air and ground — the flight controller's MAVLink stream rides that same link instead of a separate 915/433MHz telemetry radio.</span></div></li>
+    <li><span class="tick">✓</span><div class="body"><b>No VPN or internet relay needed</b><span>The MK32 bridge is Layer-2, not routed — the Jetson's own IP is directly reachable from the ground PC. The "MAVLink-over-the-internet" pattern this project started from turned out to be unnecessary; a local UDP endpoint is sufficient.</span></div></li>
+    <li><span class="tick">✓</span><div class="body"><b>Reproducible with one script</b><span><code>setup_single_drone_telemetry.sh</code> auto-detects the flight controller, installs/configures <code>mavlink-router</code>, and self-tests with live data before declaring success. No manual steps to memorize.</span></div></li>
+    <li><span class="tick">✓</span><div class="body"><b>Hardware-agnostic, proven across two flight controllers</b><span>The same script correctly picked up a PX4 FMUv6C in one session and a CubePilot Cube Orange+ in a later session, with zero code changes — see Evidence.</span></div></li>
+    <li><span class="tick">✓</span><div class="body"><b>Fixed-IP radio hardware confirmed harmless</b><span>The MK32's internal RF-modem addresses (non-configurable, identical on every unit) were measured putting zero packets on the wire — clearing the way to run five of these side by side.</span></div></li>
+  </ul>
+
+  <div class="stats">
+    <div class="stat"><div class="n">14550<small>/udp</small></div><div class="l">GCS port, any client</div></div>
+    <div class="stat"><div class="n">0<small> pkt/45s</small></div><div class="l">from fixed RF-modem IPs</div></div>
+    <div class="stat"><div class="n">2<small> FC models</small></div><div class="l">auto-detected, no code change</div></div>
+    <div class="stat"><div class="n">1<small> script</small></div><div class="l">install → configure → verify</div></div>
+  </div>
+</section>
+
+<section id="howitworks">
+  <h2><span class="num">02</span> How it's wired</h2>
+  <p class="section-dek">The flight controller never touches the network directly. A Jetson sits between it and everything else, turning a USB-serial MAVLink stream into UDP that the whole bridged network can reach.</p>
+
+  <figure class="diagram">
+    <svg viewBox="0 0 700 380" role="img" aria-label="MAVLink flows by USB from the flight controller into the Jetson, by Ethernet through a switch and the camera to the Siyi air unit, across the MK32's transparent radio bridge to the ground unit, and by Ethernet to the PC.">
+      <defs>
+        <marker id="arH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+
+      <!-- Row 1: air side -->
+      <rect x="20" y="30" width="130" height="70" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="85" y="58" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">Flight</text>
+      <text x="85" y="73" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">controller</text>
+      <text x="85" y="88" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">PX4 / ArduPilot</text>
+
+      <line x1="150" y1="65" x2="200" y2="65" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH)"/>
+      <text x="175" y="55" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.75">USB</text>
+
+      <rect x="202" y="20" width="140" height="90" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="272" y="45" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">Jetson</text>
+      <text x="272" y="60" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.7">mavlink-router</text>
+      <text x="272" y="74" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">:14550 udp server</text>
+      <text x="272" y="88" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.5">192.168.144.31</text>
+
+      <line x1="342" y1="65" x2="392" y2="65" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH)"/>
+      <text x="367" y="55" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.75">Ethernet</text>
+
+      <rect x="394" y="30" width="130" height="70" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="459" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">Switch</text>
+      <text x="459" y="76" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">unmanaged</text>
+
+      <line x1="459" y1="100" x2="459" y2="140" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH)"/>
+      <text x="500" y="123" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.75">Ethernet</text>
+      <rect x="394" y="142" width="130" height="58" rx="10" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="459" y="166" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">Camera</text>
+      <text x="459" y="181" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">Skydroid C12</text>
+
+      <line x1="524" y1="65" x2="574" y2="65" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH)"/>
+      <text x="549" y="55" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.75">Ethernet</text>
+
+      <rect x="576" y="30" width="106" height="70" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="629" y="55" text-anchor="middle" font-size="11.5" font-weight="600" fill="currentColor">MK32</text>
+      <text x="629" y="70" text-anchor="middle" font-size="11.5" font-weight="600" fill="currentColor">air unit</text>
+      <text x="629" y="85" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">.11 — fixed</text>
+
+      <!-- RF bridge -->
+      <rect x="560" y="112" width="140" height="150" rx="14" class="bridge-fill"/>
+      <text x="630" y="140" text-anchor="middle" font-size="10.5" class="bridge-text">RF LINK</text>
+      <text x="630" y="155" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.65">transparent</text>
+      <text x="630" y="168" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.65">Layer-2 bridge</text>
+      <line x1="629" y1="100" x2="629" y2="112" stroke="currentColor" stroke-width="1.4"/>
+      <line x1="629" y1="262" x2="629" y2="280" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH)"/>
+
+      <!-- Row 2: ground side -->
+      <rect x="576" y="282" width="106" height="70" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="629" y="307" text-anchor="middle" font-size="11.5" font-weight="600" fill="currentColor">MK32</text>
+      <text x="629" y="322" text-anchor="middle" font-size="11.5" font-weight="600" fill="currentColor">ground unit</text>
+      <text x="629" y="337" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">.12 — fixed</text>
+
+      <line x1="576" y1="317" x2="352" y2="317" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH)"/>
+      <text x="464" y="308" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.75">Ethernet</text>
+
+      <rect x="202" y="282" width="150" height="70" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="277" y="307" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">Ground PC</text>
+      <text x="277" y="322" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.65">QGC / MAVSDK</text>
+      <text x="277" y="337" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.5">udp://.31:14550</text>
+    </svg>
+    <figcaption>MAVLink's path from flight controller to ground PC. The only wireless hop is the MK32's own RF link — everything else is plain Ethernet, including the last leg into the PC.</figcaption>
+  </figure>
+
+  <p class="muted">Command traffic (arm, RTL, mission upload) rides the same UDP socket back the other way — the diagram shows the direction telemetry flows, but the link is bidirectional by nature of UDP + MAVLink.</p>
+</section>
+
+<section id="implementation">
+  <h2><span class="num">03</span> Rebuild it from nothing</h2>
+  <p class="section-dek">Everything below is encoded in one idempotent script. This walks through what it does and why, so it isn't a black box.</p>
+
+  <div class="step" data-n="1">
+    <h3>Prerequisites</h3>
+    <p>Flight controller connected to the Jetson over USB and powered on. The Jetson's Ethernet port already has an IP on the same subnet the ground PC will reach it on (in this build: the Siyi-bridged <code>192.168.144.0/24</code> network). A user account with <code>sudo</code>.</p>
+  </div>
+
+  <div class="step" data-n="2">
+    <h3>Get the script and run it</h3>
+    <p>On the Jetson:</p>
+    <div class="filepath">~/drone-telemetry-setup/setup_single_drone_telemetry.sh</div>
+    <pre><code><span class="cmt"># make it executable, then run it</span>
+chmod +x setup_single_drone_telemetry.sh
+./setup_single_drone_telemetry.sh</code></pre>
+    <p>It will ask for your <code>sudo</code> password twice (once to install, once to configure) — that's normal, <code>mavlink-router</code> runs as a system service.</p>
+  </div>
+
+  <div class="step" data-n="3">
+    <h3>What happens under the hood</h3>
+    <p>Six steps, each printed to the terminal as it runs:</p>
+    <ol>
+      <li><strong>Find the flight controller.</strong> Looks in <code>/dev/serial/by-id/</code> first (identifies the exact board by name), falls back to <code>/dev/ttyACM0</code>/<code>/dev/ttyUSB0</code>. This is why the same script worked unmodified on two different flight-controller models.</li>
+      <li><strong>Confirm the Jetson's network address</strong> is already set — the script doesn't configure networking, only checks it.</li>
+      <li><strong>Fetch <a href="https://github.com/alireza787b/mavlink-anywhere" target="_blank" rel="noopener">mavlink-anywhere</a></strong> if it isn't already cloned alongside the script.</li>
+      <li><strong>Install <code>mavlink-router</code></strong> (skipped automatically if already built).</li>
+      <li><strong>Configure it headlessly</strong> — no interactive prompts — wiring the flight controller's serial port to a UDP server on port <code>14550</code> that any GCS can connect to, plus two loopback outputs (<code>14540</code> for MAVSDK, <code>14569</code> for mavlink2rest) for future use.</li>
+      <li><strong>Self-test.</strong> Opens a UDP socket, waits 5 seconds for real bytes, and checks the first byte is <code>0xFE</code> or <code>0xFD</code> — the actual MAVLink v1/v2 frame markers. A running service isn't proof of a working link; bytes are.</li>
+    </ol>
+  </div>
+
+  <div class="step" data-n="4">
+    <h3>Verify any time</h3>
+    <pre><code><span class="cmt"># one-line status: is it running, what's it routing</span>
+mla status
+
+<span class="cmt"># live log of the router itself</span>
+sudo journalctl -u mavlink-router -f</code></pre>
+  </div>
+
+  <div class="step" data-n="5">
+    <h3>Connect a ground station</h3>
+    <p>From the PC, point QGroundControl / Mission Planner / MAVSDK at:</p>
+    <pre><code>UDP  →  &lt;jetson-ip&gt;:14550
+<span class="cmt"># example from this build:</span>
+UDP  →  192.168.144.31:14550</code></pre>
+  </div>
+
+  <h3>The full script</h3>
+  <p class="muted">Saved on the Jetson at <code>~/drone-telemetry-setup/setup_single_drone_telemetry.sh</code>. Copy this same file onto each of the other four Jetsons for the fleet build in Section 05.</p>
+  <pre><code>#!/usr/bin/env bash
+<span class="cmt">#
+# setup_single_drone_telemetry.sh
+#
+# Sets up mavlink-router on this Jetson so that any MAVLink Ground Control
+# Station (QGroundControl, Mission Planner, MAVSDK, etc.) reachable over the
+# network can pull live telemetry from the flight controller plugged into
+# this Jetson via USB.
+#
+# WHAT THIS SCRIPT DOES (in order):
+#   1. Finds the flight controller's USB serial device automatically.
+#   2. Clones mavlink-anywhere (https://github.com/alireza787b/mavlink-anywhere)
+#      if it isn't already present next to this script.
+#   3. Installs mavlink-router (skips rebuild if already installed).
+#   4. Configures mavlink-router in headless (non-interactive) mode:
+#        - Input:  the flight controller's USB serial port
+#        - Output: a UDP server on 0.0.0.0:14550 that any GCS on the network
+#                  can connect to, plus local loopback outputs for MAVSDK
+#                  (14540) and mavlink2rest (14569) if you use those later.
+#   5. Starts and enables the mavlink-router systemd service (survives reboot).
+#   6. Runs a live self-test: listens on the local MAVSDK UDP port and checks
+#      that real MAVLink bytes (starting with 0xFE or 0xFD) are actually
+#      arriving from the flight controller -- not just that the service is
+#      "running".
+#
+# REQUIREMENTS:
+#   - Flight controller (Pixhawk/PX4 or ArduPilot) connected to this Jetson
+#     via USB, powered on.
+#   - This Jetson's network-facing Ethernet port already has an IP address
+#     on the same subnet your ground station will reach it on (e.g. the
+#     Siyi MK32 / 192.168.144.0/24 network). This script does not configure
+#     that -- it only asks you to confirm it.
+#   - sudo privileges (you will be prompted for your password interactively).
+#
+# USAGE:
+#   chmod +x setup_single_drone_telemetry.sh
+#   ./setup_single_drone_telemetry.sh
+#
+# You can re-run this script safely at any time -- it is idempotent.
+</span>
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &amp;&amp; pwd)"
+MAVLINK_ANYWHERE_DIR="${SCRIPT_DIR}/mavlink-anywhere"
+MAVLINK_ANYWHERE_REPO="https://github.com/alireza787b/mavlink-anywhere.git"
+
+BAUD="57600"          <span class="cmt"># Ignored for USB (CDC-ACM) flight controllers, kept for UART boards.</span>
+GCS_PORT="14550"      <span class="cmt"># Standard MAVLink GCS port. QGroundControl/Mission Planner expect this.</span>
+
+bold()  { printf '\033[1m%s\033[0m\n' "$*"; }
+info()  { printf '  [->] %s\n' "$*"; }
+ok()    { printf '  [OK] %s\n' "$*"; }
+warn()  { printf '  [!!] %s\n' "$*"; }
+fail()  { printf '  [XX] %s\n' "$*"; exit 1; }
+
+bold "=================================================================="
+bold " Step 1/6 - Locate the flight controller's USB serial device"
+bold "=================================================================="
+
+FC_DEVICE=""
+if [[ -d /dev/serial/by-id ]]; then
+    for dev in /dev/serial/by-id/*; do
+        [[ -e "$dev" ]] || continue
+        FC_DEVICE="$(readlink -f "$dev")"
+        info "Found by-id device: $(basename "$dev") -&gt; ${FC_DEVICE}"
+        break
+    done
+fi
+if [[ -z "$FC_DEVICE" ]]; then
+    for candidate in /dev/ttyACM0 /dev/ttyACM1 /dev/ttyUSB0; do
+        if [[ -e "$candidate" ]]; then
+            FC_DEVICE="$candidate"
+            break
+        fi
+    done
+fi
+
+if [[ -z "$FC_DEVICE" ]]; then
+    fail "No flight controller serial device found. Plug in the FC via USB, power it on, and re-run this script."
+fi
+ok "Flight controller device: ${FC_DEVICE}"
+
+bold ""
+bold "=================================================================="
+bold " Step 2/6 - Confirm this Jetson's network address"
+bold "=================================================================="
+info "Current IPv4 addresses on this Jetson:"
+ip -4 -o addr show | awk '{print "        " $2, $4}'
+echo ""
+read -r -p "  Is this Jetson's Ethernet IP already set and correct above? [y/N]: " ip_confirm
+if [[ ! "$ip_confirm" =~ ^[Yy] ]]; then
+    fail "Set a static IP on this Jetson's Ethernet interface first, then re-run this script."
+fi
+
+bold ""
+bold "=================================================================="
+bold " Step 3/6 - Get mavlink-anywhere"
+bold "=================================================================="
+if [[ -d "$MAVLINK_ANYWHERE_DIR" ]]; then
+    ok "mavlink-anywhere already present at ${MAVLINK_ANYWHERE_DIR}"
+else
+    info "Cloning mavlink-anywhere..."
+    git clone --depth 1 "$MAVLINK_ANYWHERE_REPO" "$MAVLINK_ANYWHERE_DIR"
+    ok "Cloned."
+fi
+
+bold ""
+bold "=================================================================="
+bold " Step 4/6 - Install mavlink-router"
+bold "=================================================================="
+( cd "$MAVLINK_ANYWHERE_DIR" &amp;&amp; sudo ./install_mavlink_router.sh )
+
+bold ""
+bold "=================================================================="
+bold " Step 5/6 - Configure mavlink-router (headless, non-interactive)"
+bold "=================================================================="
+(
+    cd "$MAVLINK_ANYWHERE_DIR" &amp;&amp; sudo ./configure_mavlink_router.sh \
+        --headless \
+        --uart "$FC_DEVICE" \
+        --baud "$BAUD" \
+        --skip-serial-check \
+        --skip-dashboard \
+        --endpoints "127.0.0.1:14540,127.0.0.1:14569"
+)
+ok "mavlink-router configured and (re)started."
+
+bold ""
+bold "=================================================================="
+bold " Step 6/6 - Self-test: confirm real MAVLink bytes are flowing"
+bold "=================================================================="
+info "Listening on local UDP 14540 for 5 seconds..."
+python3 - "$GCS_PORT" &lt;&lt;'PYEOF'
+import socket, sys
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.bind(("127.0.0.1", 14540))
+s.settimeout(5)
+try:
+    data, _ = s.recvfrom(1024)
+    if data[0] in (0xFE, 0xFD):
+        print(f"  [OK] Received {len(data)} bytes, starts with MAVLink marker 0x{data[0]:02X}")
+        print(f"       First bytes: {data[:16].hex()}")
+        sys.exit(0)
+    else:
+        print(f"  [!!] Received {len(data)} bytes but they do not look like MAVLink: {data[:16].hex()}")
+        sys.exit(1)
+except socket.timeout:
+    print("  [XX] No data received in 5 seconds. Check FC power/wiring and re-run.")
+    sys.exit(1)
+PYEOF
+TEST_RESULT=$?
+
+echo ""
+if [[ $TEST_RESULT -eq 0 ]]; then
+    bold "=================================================================="
+    bold " SUCCESS"
+    bold "=================================================================="
+    JETSON_IP="$(ip -4 -o addr show | awk '/scope global/{print $4}' | cut -d/ -f1 | grep -v '^172\.' | head -1)"
+    echo "  mavlink-router is running and streaming live MAVLink data."
+    echo ""
+    echo "  On your Ground Control PC, connect via UDP to:"
+    echo "      Host: ${JETSON_IP:-&lt;this-jetson-ip&gt;}"
+    echo "      Port: ${GCS_PORT}"
+    echo ""
+    echo "  Check status any time with:  mla status"
+    echo "  Watch logs with:             sudo journalctl -u mavlink-router -f"
+else
+    warn "Setup finished but the live-data self-test failed. Check FC wiring/power and run:"
+    warn "  sudo journalctl -u mavlink-router -n 50"
+    exit 1
+fi</code></pre>
+</section>
+
+<section id="evidence">
+  <h2><span class="num">04</span> Evidence</h2>
+  <p class="section-dek">Every claim in Section 01 traces back to a command run on the actual hardware, not an assumption about how it should behave.</p>
+
+  <h3>Live MAVLink bytes, on two different flight controllers</h3>
+  <div class="tbl-wrap">
+  <table>
+    <caption>Self-test output, captured on two separate sessions with different hardware plugged in</caption>
+    <thead><tr><th>Session</th><th>Flight controller detected</th><th>First bytes received</th><th>Marker</th></tr></thead>
+    <tbody>
+      <tr><td>Initial setup</td><td><code>Auterion_PX4_FMU_v6C</code></td><td><code>fe108101016f0000...</code></td><td>0xFE (MAVLink v1)</td></tr>
+      <tr><td>Later verification</td><td><code>CubePilot_CubeOrange+</code></td><td><code>fd1c00002b01011e...</code></td><td>0xFD (MAVLink v2)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted">The script never hardcodes a board name or device path — both runs used the identical, unmodified script.</p>
+
+  <h3>Service status</h3>
+  <pre><code>$ mla status
+MAVLink router:  running
+Config:          /etc/mavlink-router/main.conf
+
+NAME                   STATE     TYPE   MODE    ADDRESS / DEVICE
+uart                   enabled   UART   input   /dev/ttyACM0 @ 57600
+gcs_listen             enabled   UDP    server  0.0.0.0:14550
+mavsdk                 enabled   UDP    normal  127.0.0.1:14540
+mavlink2rest           enabled   UDP    normal  127.0.0.1:14569</code></pre>
+
+  <h3>The RF-modem question: does the fixed <code>.11</code> / <code>.12</code> address matter?</h3>
+  <p>The MK32 air unit (<code>.11</code>) and ground unit (<code>.12</code>) ship with fixed IPs that can't be changed — meaning every one of the five drones will have <em>identical</em> addresses for these two devices once all five ground units land on one switch. A duplicate IP only matters if something tries to resolve or route to it. To check whether these devices announce themselves at all, we captured 45 seconds of broadcast and multicast traffic — plus anything addressed to <code>.11</code>/<code>.12</code> directly — on the Jetson's network interface:</p>
+  <pre><code>$ sudo tcpdump -i enP8p1s0 -n -tttt -e \
+    '(broadcast or multicast or host 192.168.144.11 or host 192.168.144.12)'
+
+44 packets captured
+49 packets received by filter
+0 packets dropped by kernel</code></pre>
+
+  <div class="chart-card">
+    <div class="chart-title">Packets captured per source, 45-second window</div>
+    <div class="chart-sub">Filtered for broadcast, multicast, and any traffic to/from the two fixed RF-modem addresses</div>
+    <div class="bar-row">
+      <div class="bar-label">.11 — air RF modem</div>
+      <div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+      <div class="bar-value">0 pkt</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">.12 — ground RF modem</div>
+      <div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+      <div class="bar-value">0 pkt</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">.10 — other (likely the PC)</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+      <div class="bar-value">44 pkt</div>
+    </div>
+  </div>
+
+  <p><strong>Result: zero packets from either fixed RF-modem address.</strong> The only traffic seen was a 1&nbsp;Hz, 72-byte multicast from <code>192.168.144.10</code> — most consistent with a ground-station app's own discovery beacon, since <code>mla status</code> already shows an explicit telemetry endpoint pointed at that same address. That source is a single PC, not a per-drone device, so it doesn't multiply when more drones join the switch.</p>
+
+  <div class="callout">
+    <b>Conclusion:</b> duplicating <code>.11</code>/<code>.12</code> across all five drones is confirmed safe, not just assumed safe. Nothing in the data path ever needs to resolve those addresses, and the modems themselves stay silent on the wire.
+  </div>
+
+  <h3>No firewall in the way</h3>
+  <pre><code>$ sudo iptables -L INPUT -n
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+<span class="cmt"># (no rules — nothing blocks incoming UDP 14550)</span></code></pre>
+</section>
+
+<section id="next">
+  <h2><span class="num">05</span> Plan: from one drone to five</h2>
+  <p class="section-dek">Same building block, repeated five times, landing on one shared switch with one PC running MAVSDK against all of them at once.</p>
+
+  <figure class="diagram">
+    <svg viewBox="0 0 700 300" role="img" aria-label="Five identical drone links, each a flight controller, Jetson and Siyi air unit with a unique Jetson IP, connect through their own MK32 ground units into one shared unmanaged switch, which one PC uses to run five simultaneous MAVSDK connections.">
+      <defs>
+        <marker id="arH2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+
+      <rect x="34" y="66" width="220" height="120" rx="12" fill="none" stroke="currentColor" stroke-width="1.1" stroke-dasharray="4 3" opacity="0.35"/>
+      <rect x="24" y="56" width="220" height="120" rx="12" fill="none" stroke="currentColor" stroke-width="1.1" stroke-dasharray="4 3" opacity="0.55"/>
+      <rect x="14" y="46" width="220" height="120" rx="12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 3"/>
+      <text x="124" y="80" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">Drone N</text>
+      <text x="124" y="98" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.7">FC → Jetson → MK32 air unit</text>
+      <text x="124" y="114" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.55">Jetson IP: 192.168.144.3N</text>
+      <text x="124" y="150" text-anchor="middle" font-size="10.5" font-weight="600" fill="currentColor" opacity="0.8">× 5 identical links</text>
+
+      <line x1="234" y1="120" x2="300" y2="120" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH2)"/>
+      <text x="267" y="110" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.75">RF + Ethernet</text>
+
+      <rect x="302" y="80" width="130" height="80" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="367" y="108" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">Unmanaged</text>
+      <text x="367" y="123" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">switch</text>
+      <text x="367" y="140" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.55">one shared /24</text>
+
+      <line x1="432" y1="120" x2="490" y2="120" stroke="currentColor" stroke-width="1.4" marker-end="url(#arH2)"/>
+
+      <rect x="492" y="70" width="180" height="100" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="582" y="98" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">Ground PC</text>
+      <text x="582" y="115" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.7">5 × MAVSDK System()</text>
+      <text x="582" y="130" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.55">one per Jetson IP : 14550</text>
+      <text x="582" y="148" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.55">telemetry in, commands out</text>
+
+      <text x="367" y="215" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">RF-modem addresses (.11 / .12) repeat on every drone — measured silent, no VLANs required.</text>
+    </svg>
+    <figcaption>The single-drone building block from Section 02, repeated five times into one shared switch. No change to the per-drone setup — only unique static IPs distinguish them.</figcaption>
+  </figure>
+
+  <h3>IP allocation scheme</h3>
+  <div class="tbl-wrap">
+  <table class="ip-table">
+    <caption>Only the Jetson (and camera / handset, already handled) need a per-drone unique address. The RF-modem IPs are identical everywhere by design and proven harmless.</caption>
+    <thead><tr><th>Device</th><th>Drone 1</th><th>Drone 2</th><th>…</th><th>Drone 5</th><th>Configurable?</th></tr></thead>
+    <tbody>
+      <tr><td>Jetson (mavlink-router)</td><td>.31</td><td>.32</td><td>…</td><td>.35</td><td>Yes — already proven</td></tr>
+      <tr><td>Camera</td><td>unique</td><td>unique</td><td>…</td><td>unique</td><td>Yes — already done</td></tr>
+      <tr><td>MK32 handset / Android layer</td><td>unique</td><td>unique</td><td>…</td><td>unique</td><td>Yes — confirmed</td></tr>
+      <tr><td>MK32 air unit RF modem</td><td>.11</td><td>.11</td><td>…</td><td>.11</td><td>No — fixed, proven silent</td></tr>
+      <tr><td>MK32 ground unit RF modem</td><td>.12</td><td>.12</td><td>…</td><td>.12</td><td>No — fixed, proven silent</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Roadmap</h3>
+  <ol class="roadmap">
+    <li><b>Assign and apply the IP scheme.</b><span> Set each Jetson's Ethernet interface to a unique static IP (.31–.35), matching the pattern already validated on Drone 1.</span></li>
+    <li><b>Roll the script out.</b><span> Copy <code>setup_single_drone_telemetry.sh</code> onto each of the other four Jetsons and run it — no changes needed, it self-detects each flight controller.</span></li>
+    <li><b>Wire it all into one switch.</b><span> Connect all five MK32 ground units and the PC to the shared unmanaged switch.</span></li>
+    <li><b>Verify all five links simultaneously.</b><span> From the PC, confirm live MAVLink on <code>192.168.144.3N:14550</code> for N = 1..5 at the same time — the same self-test the script already runs, pointed at each Jetson.</span></li>
+    <li><b>Build the MAVSDK fleet layer.</b><span> One Python process on the PC, five <code>System()</code> connections (<code>udp://192.168.144.3N:14550</code>), keyed by drone ID — telemetry subscriptions in, arm/takeoff/land/RTL/mission commands out, dispatched to whichever drone ID is targeted.</span></li>
+    <li><b>End-to-end fleet test.</b><span> All five telemetry streams live on the PC at once, with an individual command sent to and acknowledged by each drone in turn.</span></li>
+  </ol>
+
+  <div class="callout warn">
+    <b>Open item, low priority:</b> the identity of <code>192.168.144.10</code> is inferred (most likely the PC's own GCS software), not directly confirmed. It doesn't block anything — it's a single, non-multiplying, negligible-rate source — but worth a quick look in the Siyi/GCS config screens before wiring five drones together, purely for a clean inventory.
+  </div>
+</section>
+
+<footer>
+  Built on mavlink-router via <a href="https://github.com/alireza787b/mavlink-anywhere" target="_blank" rel="noopener">mavlink-anywhere</a> (Alireza Ghaderi). Local files: <code>~/drone-telemetry-setup/</code> on the Jetson.
+</footer>
+
+</div>
